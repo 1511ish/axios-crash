@@ -1,44 +1,291 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-      crossorigin="anonymous"
-    />
-    <title>Axios Crash Course</title>
-  </head>
-  <body>
-    <div class="container my-5">
-      <div class="text-center">
-        <h1 class="display-4 text-center mb-3">Axios Crash Course</h1>
-        <button class="btn btn-primary my-3" id="get">GET</button>
-        <button class="btn btn-info" id="post">POST</button>
-        <button class="btn btn-warning" id="update">PUT/PATCH</button>
-        <button class="btn btn-danger" id="delete">DELETE</button>
-        <button class="btn btn-secondary" id="sim">Sim Requests</button>
-        <button class="btn btn-secondary" id="headers">
-          Custom Headers
-        </button>
-        <button class="btn btn-secondary" id="transform">
-          Transform
-        </button>
-        <button class="btn btn-secondary" id="error">
-          Error Handling
-        </button>
-        <button class="btn btn-secondary" id="cancel">
-          Cancel
-        </button>
-      </div>
-      <hr />
-      <div id="res"></div>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>first_project_test_using_REST_apis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 85%;
+            /* background-color: pink; */
+            margin: auto;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .body {
+            width: 88%;
+            /* background-color: cyan; */
+            margin: auto;
+            margin-top: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        p {
+            /* background-color: pink; */
+            text-align: center;
+        }
+
+        #btn {
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        input {
+            padding: 2px;
+            width: 200px;
+        }
+
+        li {
+            list-style: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- <h2>first_project_test_using_REST_apis</h2> -->
+        <header>
+            <div>
+                <p><b>Item Name</b></p>
+                <input type="text" id="item_name">
+            </div>
+            <div>
+                <p><b>Description</b></p>
+                <input type="text" id="description">
+            </div>
+            <div>
+                <p><b>Price</b></p>
+                <input type="text" id="price">
+            </div>
+            <div>
+                <p><b>Quantity</b></p>
+                <input type="text" id="quantity">
+            </div>
+            <div>
+                <input type="submit" value="Add Item" id="btn">
+                <!-- <button>Add Item</button> -->
+            </div>
+        </header>
+    </div>
+    <div class="body">
+        <ul id="lists">
+            <!-- <li>name  quantity description button</li> -->
+        </ul>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
-    <script src="main.js"></script>
-  </body>
-</html>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        var item_name = document.getElementById('item_name');
+        var description = document.getElementById('description');
+        var price = document.getElementById('price');
+        var quantity = document.getElementById('quantity');
+
+        const btn = document.getElementById("btn");
+        const ul = document.getElementById('lists');
+        var url = 'https://crudcrud.com/api/2ef6eda1bf7a40a6aadb7eb0c7f5e418/database1/';
+        btn.addEventListener('click', () => {
+            let li = document.createElement('li');
+
+            const obj = {
+                item_name: item_name.value,
+                description: description.value,
+                price: price.value,
+                quantity: quantity.value
+            }
+
+            axios.post('https://crudcrud.com/api/2ef6eda1bf7a40a6aadb7eb0c7f5e418/database1', obj)
+                .then(Response => showDataOnScreen(Response.data))
+                .catch(err => console.error(err));
+
+            item_name.value = '';
+            description.value = '';
+            price.value = '';
+            quantity.value = '';
+        });
+
+        function showDataOnScreen(myObj) {
+            var string = "";
+            string = myObj['item_name'] + " - ";
+            string = string + myObj['description'] + " - ";
+            string = string + myObj['price'] + " - ";
+            string = string + myObj['quantity'] + " ";
+            var n = string.length;
+
+            var buy1 = document.createElement('input');
+            buy1.type = "submit";
+            buy1.value = "Buy One";
+            buy1.className = 'buy1';
+            var buy2 = document.createElement('input');
+            buy2.type = "submit";
+            buy2.value = "Buy Two";
+            buy2.className = 'buy2';
+            var buy3 = document.createElement('input');
+            buy3.type = "submit";
+            buy3.value = "Buy Three";
+            buy3.className = 'buy3';
+            var li = document.createElement('li');
+            li.className = "list";
+            li.appendChild(document.createTextNode(string));
+            console.log(li.firstChild);
+            li.appendChild(buy1);
+            li.appendChild(buy2);
+            li.appendChild(buy3);
+            ul.appendChild(li);
+        }
+        window.addEventListener("DOMContentLoaded", () => {
+            axios.get('https://crudcrud.com/api/2ef6eda1bf7a40a6aadb7eb0c7f5e418/database1')
+                .then(response => {
+                    for (var i = 0; i < response.data.length; i++) {
+                        showDataOnScreen(response.data[i]);
+                    }
+                })
+                .catch(err => console.error(err));
+        })
+        ul.addEventListener('click', buyOne);
+        ul.addEventListener('click', buyTwo);
+        ul.addEventListener('click', buythree);
+
+        function buyOne(e) {
+            e.preventDefault();
+
+            if (e.target.classList.contains('buy1')) {
+                console.log("buy1");
+                var li = e.target.parentElement;
+                var string = li.firstChild.textContent;
+                ul.removeChild(li);
+                var text_arr = string.split('-');
+                text_arr[3] = text_arr[3] - 1;
+                var myObj = {
+                    item_name: text_arr[0],
+                    description: text_arr[1],
+                    price: text_arr[2],
+                    quantity: text_arr[3]
+                }
+    
+                //it will work here as a key
+                let item_name = text_arr[0].trim();
+                console.log(item_name);
+                axios.get('https://crudcrud.com/api/2ef6eda1bf7a40a6aadb7eb0c7f5e418/database1')
+                    .then(response => {
+                        console.log("getFirst res");
+                        for (var i = 0; i < response.data.length; i++) {
+                            let obj = response.data[i];
+                            if (item_name == obj['item_name'].trim()) {
+
+                                url = url + obj['_id'];
+                                console.log(url);
+                                axios.put(url, myObj)
+                                    .then(response => {
+                                        console.log(JSON.parse(response.config.data))
+                                        showDataOnScreen(JSON.parse(response.config.data))
+                                    })
+                                    .catch(err => console.error(err));
+
+                                url = 'https://crudcrud.com/api/2ef6eda1bf7a40a6aadb7eb0c7f5e418/database1/';
+                            }
+                        }
+                    })
+                    .catch(err => console.error(err));
+            }
+        }
+        function buyTwo(e) {
+            e.preventDefault();
+            if (e.target.classList.contains('buy2')) {
+                console.log("buy2");
+                var li = e.target.parentElement;
+                var string = li.firstChild.textContent;
+                ul.removeChild(li);
+                var text_arr = string.split('-');
+                text_arr[3] = text_arr[3] - 2;
+                var myObj = {
+                    item_name: text_arr[0],
+                    description: text_arr[1],
+                    price: text_arr[2],
+                    quantity: text_arr[3]
+                }
+
+                //it will work here as a key
+                let item_name = text_arr[0].trim();
+                console.log(item_name);
+                axios.get('https://crudcrud.com/api/2ef6eda1bf7a40a6aadb7eb0c7f5e418/database1')
+                    .then(response => {
+                        console.log("getFirst res");
+                        for (var i = 0; i < response.data.length; i++) {
+                            let obj = response.data[i];
+                            if (item_name == obj['item_name'].trim()) {
+
+                                url = url + obj['_id'];
+                                console.log(url);
+                                axios.put(url, myObj)
+                                    .then(response => {
+                                        console.log(JSON.parse(response.config.data))
+                                        showDataOnScreen(JSON.parse(response.config.data))
+                                    })
+                                    .catch(err => console.error(err));
+
+                                url = 'https://crudcrud.com/api/2ef6eda1bf7a40a6aadb7eb0c7f5e418/database1/';
+                            }
+                        }
+                    })
+                    .catch(err => console.error(err));
+            }
+        }
+        function buythree(e) {
+            e.preventDefault();
+            if (e.target.classList.contains('buy3')) {
+                console.log("buy3");
+                var li = e.target.parentElement;
+                var string = li.firstChild.textContent;
+                ul.removeChild(li);
+                var text_arr = string.split('-');
+                text_arr[3] = text_arr[3] - 3;
+                var myObj = {
+                    item_name: text_arr[0],
+                    description: text_arr[1],
+                    price: text_arr[2],
+                    quantity: text_arr[3]
+                }
+
+                //it will work here as a key
+                let item_name = text_arr[0].trim();
+                console.log(item_name);
+                axios.get('https://crudcrud.com/api/2ef6eda1bf7a40a6aadb7eb0c7f5e418/database1')
+                    .then(response => {
+                        console.log("getFirst res");
+                        for (var i = 0; i < response.data.length; i++) {
+                            let obj = response.data[i];
+                            if (item_name == obj['item_name'].trim()) {
+
+                                url = url + obj['_id'];
+                                console.log(url);
+                                axios.put(url, myObj)
+                                    .then(response => {
+                                        console.log(JSON.parse(response.config.data))
+                                        showDataOnScreen(JSON.parse(response.config.data))
+                                    })
+                                    .catch(err => console.error(err));
+
+                                url = 'https://crudcrud.com/api/2ef6eda1bf7a40a6aadb7eb0c7f5e418/database1/';
+                            }
+                        }
+                    })
+                    .catch(err => console.error(err));
+            }
+        }
+
+    </script>
+</body>
