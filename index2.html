@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h2>Test--2</h2>
+    <div class="container">
+
+        <head>
+            <label for="price">Choose Price: </label>
+            <input type="text" id="price">
+            <label for="dish">Choose Dish: </label>
+            <input type="text" id="dish">
+            <label for="table">Choose a Table: </label>
+            <select name="" id="tables">
+                <option value="Table1">Table1</option>
+                <option value="Table2">Table2</option>
+                <option value="Table3">Table3</option>
+            </select>
+            <input type="submit" id="submit_btn">
+        </head>
+        <div class="body">
+            <h1>Orders</h1>
+
+            <h2>Table 1</h2>
+            <ul id="ul_1"></ul>
+            <h2>Table 2</h2>
+            <ul id="ul_2"></ul>
+            <h2>Table 3</h2>
+            <ul id="ul_3"></ul>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+
+        var submit_btn = document.getElementById('submit_btn');
+        submit_btn.addEventListener('click', takeOrder);
+
+        let ul_1 = document.getElementById('ul_1');
+        let ul_2 = document.getElementById('ul_2');
+        let ul_3 = document.getElementById('ul_3');
+
+        var url = 'https://crudcrud.com/api/4d9c329714054019b1377789eadd83ed/restorantData/';
+
+        ul_1.addEventListener('click', deleteParosa1);
+        ul_2.addEventListener('click', deleteParosa2);
+        ul_3.addEventListener('click', deleteParosa3);
+
+        window.addEventListener("DOMContentLoaded", () => {
+            axios.get('https://crudcrud.com/api/4d9c329714054019b1377789eadd83ed/restorantData')
+                .then(response => {
+                    for (var i = 0; i < response.data.length; i++) {
+                        showDataOnScreen(response.data[i]);
+                    }
+                })
+                .catch(err => console.error(err));
+        })
+
+        function takeOrder(e) {
+            e.preventDefault();
+
+            var price = document.getElementById('price').value;
+            var dish = document.getElementById('dish').value;
+            var ind = document.getElementById("tables").selectedIndex;
+            var table = document.getElementsByTagName("option")[ind].value;
+
+            let obj = {
+                price: price,
+                dish: dish,
+                table: table
+            }
+
+            let ul_1 = document.getElementById('ul_1');
+            let ul_2 = document.getElementById('ul_2');
+            let ul_3 = document.getElementById('ul_3');
+
+            axios.post('https://crudcrud.com/api/4d9c329714054019b1377789eadd83ed/restorantData', obj)
+                .then(Response => {
+                    console.log(Response.data);
+                    showDataOnScreen(Response.data);
+                })
+                .catch(err => console.error(err));
+
+        }
+
+        function showDataOnScreen(myObj) {
+            let string = "";
+            string = myObj['price'] + " - ";
+            string = string + myObj['dish'] + " - ";
+            string = string + myObj['table'] + " ";
+            var n = string.length;
+
+            let delete_btn = document.createElement('input');
+            delete_btn.type = "submit";
+            delete_btn.value = "delete";
+            delete_btn.className = 'delete';
+
+            let li = document.createElement('li');
+            li.appendChild(document.createTextNode(string));
+            li.appendChild(delete_btn);
+
+            if (myObj['table'] == 'Table1')
+                ul_1.appendChild(li);
+            else if (myObj['table'] == 'Table2')
+                ul_2.appendChild(li);
+            else
+                ul_3.appendChild(li);
+        }
+
+        function deleteParosa1(e) {
+            e.preventDefault();
+            if (e.target.classList.contains('delete')) {
+                console.log('ul_1 ka delete');
+                let li = e.target.parentElement;
+                let string = li.firstChild.textContent;
+
+                let text_arr = string.split('-');
+                let key = text_arr[2].trim();
+
+                axios.get('https://crudcrud.com/api/4d9c329714054019b1377789eadd83ed/restorantData')
+                    .then(Response => {
+                        for (let i = 0; i < Response.data.length; i++) {
+                            let obj = Response.data[i];
+                            if (key == obj['table']) {
+                                let obj_id = obj['_id'];
+                                console.log(obj_id);
+                                url = url + obj_id;
+                                console.log(url);
+
+                                axios.delete(url)
+                                    .then(Response => {
+                                        console.log(Response);
+                                        ul_1.removeChild(li);
+                                    })
+                                    .catch(err => console.error(err));
+
+                                url = 'https://crudcrud.com/api/4d9c329714054019b1377789eadd83ed/restorantData/';
+                            }
+                        }
+                    })
+                    .then(Response => {
+                        console.log(Response);
+                    })
+                    .catch(err => console.error(err));
+            }
+
+        }
+        function deleteParosa2(e) {
+            e.preventDefault();
+            if (e.target.classList.contains('delete')) {
+                console.log('ul_2 ka delete');
+                let li = e.target.parentElement;
+                let string = li.firstChild.textContent;
+
+                let text_arr = string.split('-');
+                let key = text_arr[2].trim();
+
+                axios.get('https://crudcrud.com/api/4d9c329714054019b1377789eadd83ed/restorantData')
+                    .then(Response => {
+                        for (let i = 0; i < Response.data.length; i++) {
+                            let obj = Response.data[i];
+                            if (key == obj['table']) {
+                                let obj_id = obj['_id'];
+                                console.log(obj_id);
+                                url = url + obj_id;
+                                console.log(url);
+
+                                axios.delete(url)
+                                    .then(Response => {
+                                        console.log(Response);
+                                        ul_2.removeChild(li);
+                                    })
+                                    .catch(err => console.error(err));
+
+                                url = 'https://crudcrud.com/api/4d9c329714054019b1377789eadd83ed/restorantData/';
+                            }
+                        }
+                    })
+                    .then(Response => {
+                        console.log(Response);
+                    })
+                    .catch(err => console.error(err));
+            }
+        }
+        function deleteParosa3(e) {
+            e.preventDefault();
+            if (e.target.classList.contains('delete')) {
+                console.log('ul_3 ka delete');
+                var li = e.target.parentElement;
+                var string = li.firstChild.textContent;
+
+                var text_arr = string.split('-');
+                let key = text_arr[2].trim();
+
+                axios.get('https://crudcrud.com/api/4d9c329714054019b1377789eadd83ed/restorantData')
+                    .then(Response => {
+                        for (let i = 0; i < Response.data.length; i++) {
+                            let obj = Response.data[i];
+                            if (key == obj['table']) {
+                                let obj_id = obj['_id'];
+                                console.log(obj_id);
+                                url = url + obj_id;
+                                console.log(url);
+
+                                axios.delete(url)
+                                    .then(Response => {
+                                        console.log(Response);
+                                        ul_3.removeChild(li);
+                                    })
+                                    .catch(err => console.error(err));
+
+                                url = 'https://crudcrud.com/api/4d9c329714054019b1377789eadd83ed/restorantData/';
+                            }
+                        }
+                    })
+                    .then(Response => {
+                        console.log(Response);
+                    })
+                    .catch(err => console.error(err));
+            }
+
+        }
+
+    </script>
+</body>
+
+</html>
